@@ -8,7 +8,7 @@ SQLDB=./temperature.db
 #if [ ! -f $SQLDB ] ; then ./ArchiveDB.sh ; fi
 
 if [ -f /proc/cpuinfo ] ; then
-  grep "Hardware" /proc/cpuinfo
+  grep "Hardware" /proc/cpuinfo > /dev/null
   if [ $? -eq 0 ] ; then
     temphumi=`python get_temp.py ${SQLDB}`
   else
@@ -26,3 +26,5 @@ humi=`echo $temphumi | cut -d" " -f2`
 
 curl --silent -i -X PUT http://api-m2x.att.com/v2/devices/${DEVICE_ID}/streams/temperature/value -H "X-M2X-KEY: ${PRIMARY_API_KEY}" -H "Content-Type: application/json" -d "{ \"value\": \"${temp}\" }" > /dev/null
 curl --silent -i -X PUT http://api-m2x.att.com/v2/devices/${DEVICE_ID}/streams/humidity/value -H "X-M2X-KEY: ${PRIMARY_API_KEY}" -H "Content-Type: application/json" -d "{ \"value\": \"${humi}\" }" > /dev/null
+
+python temperature_check_wrapper.py
