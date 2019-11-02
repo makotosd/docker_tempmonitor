@@ -11,3 +11,5 @@ COPY get_temp.py /
 COPY TempMonitor_M2X.sh /
 COPY temperature_check_wrapper.py /
 COPY check_temperature.py /
+
+ENTRYPOINT [TempMonitor_M2X.sh]
