@@ -21,10 +21,6 @@ fi
 temp=`echo $temphumi | cut -d" " -f1`
 humi=`echo $temphumi | cut -d" " -f2`
 
-echo $temp, $humi
-
-exit
-
 #./mailalert.sh $temp
 #./mailalert2.sh $temp
 
