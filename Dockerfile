@@ -9,3 +9,5 @@ RUN apt-get update -q -y && \
     pip install wiringpi m2x line-bot-sdk
 COPY get_temp.py /
 COPY TempMonitor_M2X.sh /
+COPY TempChecker_M2X.py /
+COPY check_temperature.py /
