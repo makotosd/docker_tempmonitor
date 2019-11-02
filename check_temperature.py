@@ -26,8 +26,6 @@ def get_from_m2x():
     res_json = client.last_response.json
     values = res_json['values']
 
-    print(values)
-
     return values
 
 
@@ -39,7 +37,7 @@ def label_for_values(values):
 
         if temperature > TH_HI:
             zone.append('TH_HI')
-        if temperature < TH_LO:
+        elif temperature < TH_LO:
             zone.append('TH_LO')
         else:
             zone.append('NORMAL')
@@ -62,23 +60,23 @@ def gen_message(labels, temperature):
 
     if count_hi is len(labels):
         #  全部温度が高い
-        s = "temperature is too HOT!! {} degree!!".format(temperature)
+        s = "temperature is too HOT!! {:.2f} degree!!".format(temperature)
     elif count_lo is len(labels):
         #  全部温度が低い
-        s = "temperature is too LOW!! {} degree!!".format(temperature)
+        s = "temperature is too LOW!! {:.2f} degree!!".format(temperature)
     else:
         if count_no is len(labels)-1 and labels[0] is 'TH_HI':
             #  NORMALから高温に変化
-            s = "temperature is too HOT!! {} degree!!".format(temperature)
+            s = "temperature is too HOT!! {:.2f} degree!!".format(temperature)
         elif count_no is len(labels)-1 and labels[0] is 'TH_LO':
             #  NORMALから低温に変化
-            s = "temperature is too LOW!! {} degree!!".format(temperature)
+            s = "temperature is too LOW!! {:.2f} degree!!".format(temperature)
         elif count_hi is len(labels)-1 and labels[0] is 'NORMAL':
             #  高温から常温に変化
-            s = "temperature is return to normal. {} degree.".format(temperature)
+            s = "temperature is return to normal. {:.2f} degree.".format(temperature)
         elif count_lo is len(labels)-1 and labels[0] is 'NORMAL':
             #  低温から常温に変化
-            s = "temperature is return to normal. {} degree.".format(temperature)
+            s = "temperature is return to normal. {:.2f} degree.".format(temperature)
         else:
             pass
 
@@ -101,7 +99,7 @@ def check_temperature(test_file):
     labels = label_for_values(values)
 
     #  rangeをもとにメッセージを決める
-    msg = gen_message(labels, values[0])
+    msg = gen_message(labels, values[0]['value'])
 
     #  LINEにmessageをpush
     if msg is not None:
@@ -109,4 +107,10 @@ def check_temperature(test_file):
 
 
 if __name__ == '__main__':
-    check_temperature('test01.json')
+    check_temperature('test04.json')  # no msg, hi/lo/no
+    check_temperature('test03.json')  # low -> nom
+    check_temperature('test02.json')  # hot -> nom
+    check_temperature('test01.json')  # nom -> low
+    check_temperature('test00.json')  # nom -> hot
+
+    check_temperature(None)
