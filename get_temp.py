@@ -22,7 +22,7 @@ temp = ((temp / 65535.0) * 165 - 40)
 hudi = ((hudi / 65535.0 ) * 100)
 #print "Humidity %.2f" % hudi
 #print "Temperature %.2f" % temp
-print temp, hudi
+print (temp, hudi)
 
 #datetime = "%s" % (time.strftime("%Y/%m/%d %H:%M:%S"))
 

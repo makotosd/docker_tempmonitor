@@ -7,9 +7,23 @@ SQLDB=./temperature.db
 
 #if [ ! -f $SQLDB ] ; then ./ArchiveDB.sh ; fi
 
-temphumi=`python get_temp.py ${SQLDB}`
+if [ -f /proc/cpuinfo ] ; then
+  grep "Hardware" /proc/cpuinfo
+  if [ $? -eq 0 ] ; then
+    temphumi=`python get_temp.py ${SQLDB}`
+  else
+    temphumi="25.0 25.0"
+  fi
+else
+  temphumi="24.0 24.0"
+fi
+#temphumi=`python get_temp.py ${SQLDB}`
 temp=`echo $temphumi | cut -d" " -f1`
 humi=`echo $temphumi | cut -d" " -f2`
+
+echo $temp, $humi
+
+exit
 
 #./mailalert.sh $temp
 #./mailalert2.sh $temp
