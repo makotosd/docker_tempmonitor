@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from m2x.client import M2XClient
 import json
+from linebot import LineBotApi
+from linebot.models import TextSendMessage
 
 TH_HI = 35
 TH_LO = 22
@@ -84,8 +86,9 @@ def gen_message(labels, temperature):
 
 
 def send_line_message(msg):
-    print(msg)
-
+    ACCESS_TOKEN = 'ER+KnU1nE9Z1bDZ4dwNCz7INXVT+9zzFKt4RAzU2e/c2G0c9rB8EhcAFeHEbODRlVume3fQofmza9p+N6pdBP0cXiyNrO71bs89HV1S54X7234j+dGdukvhtBzgdCEv+Cf4VtpkVeIV8r1i0lC9gVQdB04t89/1O/w1cDnyilFU='
+    line_bot_api = LineBotApi(ACCESS_TOKEN)
+    line_bot_api.broadcast(TextSendMessage(text=msg))
 
 def check_temperature(test_file):
     #  m2xから値を取ってくる
@@ -107,10 +110,10 @@ def check_temperature(test_file):
 
 
 if __name__ == '__main__':
-    check_temperature('test04.json')  # no msg, hi/lo/no
-    check_temperature('test03.json')  # low -> nom
-    check_temperature('test02.json')  # hot -> nom
+    #check_temperature('test04.json')  # no msg, hi/lo/no
+    #check_temperature('test03.json')  # low -> nom
+    #check_temperature('test02.json')  # hot -> nom
     check_temperature('test01.json')  # nom -> low
-    check_temperature('test00.json')  # nom -> hot
+    #check_temperature('test00.json')  # nom -> hot
 
     check_temperature(None)

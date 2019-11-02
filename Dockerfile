@@ -6,6 +6,6 @@ FROM ubuntu
 RUN apt-get update -q -y && \
     apt-get upgrade -y && \
     apt-get install -y python-pip curl bc && \
-    pip install wiringpi m2x
+    pip install wiringpi m2x line-bot-sdk
 COPY get_temp.py /
 COPY TempMonitor_M2X.sh /
