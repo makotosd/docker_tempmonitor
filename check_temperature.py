@@ -3,10 +3,13 @@ from m2x.client import M2XClient
 import json
 from linebot import LineBotApi
 from linebot.models import TextSendMessage
+import datetime
+import csv
+import os.path
 
 TH_HI = 35
 TH_LO = 22
-
+PATH = "/tmp/vol_lime_temperature/last_line_msg.csv"
 
 def get_from_m2x():
     client = M2XClient(key='81faa53c80c0c084e797d706bc84be25')  # API-KEY
@@ -90,6 +93,13 @@ def send_line_message(msg):
     line_bot_api = LineBotApi(ACCESS_TOKEN)
     line_bot_api.broadcast(TextSendMessage(text=msg))
 
+    path = PATH
+    with open(path, mode='w') as file:
+        writer = csv.writer(file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+        now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        writer.writerow([now, msg])
+
+
 def check_temperature(test_file):
     #  m2xから値を取ってくる
     if test_file is None:
@@ -105,8 +115,29 @@ def check_temperature(test_file):
     msg = gen_message(labels, values[0]['value'])
 
     #  LINEにmessageをpush
-    if msg is not None:
+    if msg is not None and msg is not same_with_previous_msg(msg):
         send_line_message(msg)
+
+
+def read_last_line_msg():
+    path = PATH
+    if os.path.exists(path):
+        with open(path, newline='') as csvfile:
+            reader = csv.reader(csvfile, delimiter=' ', quotechar='"')
+            return datetime.datetime.strptime(reader[0], '%Y-%m-%d %H:%M:%S'), reader[1]
+    else:
+        return datetime.datetime.now(), ""
+
+
+def same_with_pevious_msg(new_msg):
+    (pre_timestamp, pre_msg) = read_last_line_msg()
+
+    if new_msg is pre_msg:
+        return True
+    elif pre_timestamp - datetime.datetime.now() > datetime.timedelta(mintes=60):
+        return True
+    else:
+        return False
 
 
 if __name__ == '__main__':
