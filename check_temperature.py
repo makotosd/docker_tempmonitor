@@ -9,7 +9,7 @@ import os.path
 
 TH_HI = 35
 TH_LO = 22
-PATH = "/tmp/vol_lime_temperature/last_line_msg.csv"
+PATH = "/tmp/last_line_msg.csv"
 
 def get_from_m2x():
     client = M2XClient(key='81faa53c80c0c084e797d706bc84be25')  # API-KEY
@@ -115,7 +115,7 @@ def check_temperature(test_file):
     msg = gen_message(labels, values[0]['value'])
 
     #  LINEにmessageをpush
-    if msg is not None and msg is not same_with_previous_msg(msg):
+    if msg is not None and msg_differ_from_previous_one(msg):
         send_line_message(msg)
 
 
@@ -129,12 +129,12 @@ def read_last_line_msg():
         return datetime.datetime.now(), ""
 
 
-def same_with_pevious_msg(new_msg):
+def msg_differ_from_previous_one(new_msg):
     (pre_timestamp, pre_msg) = read_last_line_msg()
 
-    if new_msg is pre_msg:
+    if new_msg is not pre_msg:
         return True
-    elif pre_timestamp - datetime.datetime.now() > datetime.timedelta(mintes=60):
+    elif datetime.datetime.now() - pre_timestamp > datetime.timedelta(minutes=60):
         return True
     else:
         return False
